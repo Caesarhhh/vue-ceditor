@@ -1,10 +1,11 @@
 <template>
   <div class="TextInputArea">
-    <textarea @keyup="changeText" v-model="inputText"></textarea>
+    <textarea @keydown="changeText()" @keyup="changeText()" v-model="inputText"></textarea>
   </div>
 </template>
 
 <script>
+  import Prism from "prismjs"
   export default {
     name: "textInputArea",
     props:["datas"],
@@ -14,14 +15,28 @@
       }
     },
     methods:{
-      changeText:function (){
+      changeText:function (e){
         this.$emit("update:datas",this.inputText)
-        console.log(this.datas)
         this.$parent.makeHtml()
       }
     },
     mounted() {
       this.inputText=this.datas
+      // document.addEventListener('paste',function (event){
+      //   console.log(event.clipboardData.items[0])
+      //   var items = event.clipboardData && event.clipboardData.items;
+      //   var file = null;
+      //   if (items && items.length) {
+      //     // 检索剪切板items
+      //     for (var i = 0; i < items.length; i++) {
+      //       console.log(items[i].type)
+      //       if (items[i].type.indexOf('image') !== -1) {
+      //         file = items[i].getAsFile();
+      //         break;
+      //       }
+      //     }
+      //   }
+      // })
     }
   }
 </script>
