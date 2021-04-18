@@ -4,6 +4,9 @@
     <div class="button" @click="openPicwin">
       <img src="http://caesar216.usa3v.net/caelog/images/picture.png" alt="error">
     </div>
+    <div class="button" @click="save">
+      <img src="http://caesar216.usa3v.net/caelog/images/save.png" alt="error">
+    </div>
     <div id="ImgBox" v-if="ifwin">
       <div id="close" @click="closePicwin">
         <img :src="closeImgSrc" alt="error">
@@ -19,6 +22,7 @@
         </GeminiScrollbar>
       </div>
       <div id="upload">点击或拖拽上传本地图片</div>
+      <input type="file" id="uploadByClick" @change="uploadFilebyClick">
     </div>
   </div>
 </div>
@@ -51,7 +55,7 @@
         ],
         closeImgSrc:"http://caesar216.usa3v.net/caelog/images/close2.png",
         ifwin:false,
-        selectedIndex:9999
+        selectedIndex:99999
       }
     },
     methods:{
@@ -72,6 +76,10 @@
         this.selectedIndex=index
       },
       copyPic:function (){
+        if(this.selectedIndex==99999){
+          alert ("未选择图片！")
+          return
+        }
         let text="<img src=\""+this.imgs[this.selectedIndex]+"\" width=\"200px\" />"
         this.$copyText(text)
         this.closePicwin()
@@ -83,29 +91,29 @@
       onDrop (e) {
         e.stopPropagation();
         e.preventDefault();
-        this.imgPreview(e.dataTransfer.files);
+        //this.imgPreview(e.dataTransfer.files);
         this.uploadFile(e.dataTransfer.files)
-      },
-      //图片预览
-      imgPreview (files) {
-        let read = new FileReader();
-        var that=this
-        let imgUrl = document.querySelector('#preview-img');
-        read.readAsDataURL(files[0]);
-        read.onload = function () {
-          let url = read.result;
-          let img = new Image();
-          img.src = url;
-          console.log(url)
-          that.imgs.push(url)
-        }
       },
       uploadFile (files) {
         let params = new FormData();
         params.append('file', files[0]);
-        axios.post('https://caelog.top:8443/uploadtemp', params).then(res=>{
-          console.log(res)
+        var that=this
+        axios.post('https://www.caelog.top:8443/files/uploadtemp', params).then(res=>{
+          that.imgs.push("http://caesar216.usa3v.net/"+res.data.data)
         })
+      },
+      uploadFilebyClick (e) {
+        let files=e.target.files
+        let params = new FormData();
+        params.append('file', files[0]);
+        var that=this
+        axios.post('https://www.caelog.top:8443/files/uploadtemp', params).then(res=>{
+          that.imgs.push("http://caesar216.usa3v.net/"+res.data.data)
+        })
+      },
+      save:function (){
+        this.$parent.save()
+        alert("已保存到本地缓存")
       }
     },
     mounted() {
@@ -171,7 +179,6 @@
   cursor: pointer;
 }
 #ImgSelectArea{
-  border-style: solid;
   border-radius: 10%;
   width:96%;
   height: 70%;
@@ -185,7 +192,8 @@
   height: 45%;
   float: left;
   margin-left: 2%;
-  margin-top: 2%;
+  margin-top: 1%;
+  margin-bottom: 1%;
   cursor: pointer;
   border-style: solid;
   border-radius: 30%;
@@ -198,7 +206,8 @@
    height: 45%;
    float: left;
    margin-left: 2%;
-   margin-top: 2%;
+   margin-top: 1%;
+  margin-bottom: 1%;
    cursor: pointer;
    border-style: solid;
   border-radius: 30%;
@@ -218,5 +227,16 @@
   font-size: 180%;
   left:25%;
   cursor: pointer;
+}
+#uploadByClick{
+  position: absolute;
+  bottom:4%;
+  font-family: 华光楷体_CNKI;
+  font-size: 180%;
+  left:15%;
+  cursor: pointer;
+  z-index: 4;
+  width:60%;
+  opacity: 0;
 }
 </style>

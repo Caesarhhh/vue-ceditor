@@ -1,5 +1,5 @@
 <template>
-  <div class="vueCeditor">
+  <div class="vueCeditor" @keydown.s="savebyKey">
     <selectors id="selectors"></selectors>
     <textInput id="textInput" :datas.sync="inputText" v-model="inputText"></textInput>
     <textShow id="textShow" :datas.sync="innerHtml"></textShow>
@@ -26,19 +26,33 @@
     data(){
         return{
            inputText:"",
-           innerHtml:""
+           innerHtml:"",
+
         }
-    }
-    ,
+    },
     methods:{
       makeHtml:async function (){
         this.innerHtml=converter.makeHtml(this.inputText)
         Prism.highlightAll()
+      },
+      save:function (){
+        localStorage.setItem("draft",this.inputText)
+      },
+      savebyKey:function (e){
+        if(e.ctrlKey==false){
+          return
+        }
+        localStorage.setItem("draft",this.inputText)
+        alert("已保存到本地缓存")
+        e.preventDefault()
       }
     },
     mounted() {
       this.innerHtml=converter.makeHtml(this.inputText)
       Prism.highlightAll()
+    },
+    beforeMount() {
+      this.inputText=localStorage.getItem("draft")
     }
   }
 </script>

@@ -7,10 +7,13 @@
 <script>
   import TextInputArea from "./components/TextInputArea";
   import vueCeditor from "./components/vueCeditor";
+  import axios from 'axios';
 export default {
   name: 'App',
   components:{
     vueCeditor:vueCeditor
+  },
+  beforeMount() {
   }
 }
 </script>

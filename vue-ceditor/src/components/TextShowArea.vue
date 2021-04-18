@@ -3,7 +3,6 @@
     <div class="textShow" name="textShow">
       <GeminiScrollbar>
           <div id="showContent" v-html="datas">
-            <code></code>
           </div>
       </GeminiScrollbar>
     </div>
